@@ -12,8 +12,9 @@ router.get('/', function(req, res, next) {
 router.post('/', async function(req,res,next){
   db.get('SELECT * FROM korisnici WHERE email=?', [req.body.email], async (err,data)=>{
     if(err){
-      console.log("greska na bazi");
-      return;
+    console.log(err);
+    res.render('zaboravljena-lozinka', {poruka: "Greška sa bazom", greska: true});      
+    return;
     }
     if(data){
     const password = generator.generate({
@@ -24,8 +25,8 @@ router.post('/', async function(req,res,next){
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-        user: 'i56526455@gmail.com',
-        pass: 'samckahttxozyhoy'
+        user: process.env.EMAIL_ACC,
+        pass: process.env.EMAIL_KOD
         }
         });
         const mailOptions = {
@@ -36,21 +37,26 @@ router.post('/', async function(req,res,next){
         };
         db.run('UPDATE korisnici SET password=? WHERE email=?', [hashed,req.body.email], (err,data)=>{
           if(err){
-            console.log("greska na bazi");
+              console.log(err);
+
+          res.render('zaboravljena-lozinka', {poruka: "Greška sa bazom", greska: true});      
             return;
           }
           
           transporter.sendMail(mailOptions, (err, info) => {
               if(err){
-              console.log(err);
+                  console.log(err);
+
+                res.render('zaboravljena-lozinka', {poruka: "Greška sa bazom", greska: true});      
+              return;
               } else {
-              res.render('zaboravljena-lozinka', {uspjesno: "Nova lozinka je poslana na Email"})
+              res.render('login', {poruka: "Nova lozinka je poslana na E-mail", greska:false})
               }
               });
           
         });
     }else{
-      res.render('zaboravljena-lozinka', {poruka: "E-mail ne postoji u sistemu"})
+      res.render('zaboravljena-lozinka', {poruka: "E-mail ne postoji u sistemu", greska:true})
     }
   });
 });

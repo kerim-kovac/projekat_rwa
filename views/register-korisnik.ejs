@@ -116,11 +116,15 @@
         <h1>Registracija korisnika</h1>
         <p class="subtitle">Kreirajte vaš korisnički nalog</p>
       </div>
-      <% if(typeof poruka !== 'undefined'){ %>
+   <% if(typeof poruka !== 'undefined' && greska==true){ %>
       <div class="alert alert-danger">
-      <strong>Greška:</strong> <%= poruka %>
+      <%= poruka %>
       </div>
-        <% }%>
+        <% }else if(typeof poruka !== 'undefined' && greska==false){ %>
+      <div class="alert alert-success">
+      <%= poruka %>
+      </div>
+      <%  }%>
       <div class="divider"></div>
 
       <form action="/register/korisnik" method="POST">

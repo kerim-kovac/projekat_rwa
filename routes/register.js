@@ -17,26 +17,24 @@ router.get('/agencija', function(req,res,next){
 router.post('/korisnik', async function(req,res,next){
   db.get('SELECT * FROM korisnici WHERE username=? OR email=?',[req.body.username, req.body.email], async(err,data)=>{
       if(err){
-        res.end("greska sa bazom");
+        res.render('register-korisnik', {poruka: "Greška sa bazom", greska: true});
         return;
       }
       if(data){
-        res.render('register-agencija', {poruka: "Vaši podaci su vec registrovani"});
+        res.render('register-korisnik', {poruka: "Vaši podaci su vec registrovani", greska: true});
         return;
       }else{
         if(req.body.password == req.body.ponovljeni){
-        const password = req.body.password;
-        const role = 'User';
-        const hashed = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO korisnici (ime, prezime, username, email, password,role)  VALUES(?,?,?,?,?,?)',[req.body.ime, req.body.prezime,req.body.username,req.body.email,hashed,role], (err,data)=>{
+        const hashed = await bcrypt.hash(req.body.password, 10);
+        db.run('INSERT INTO korisnici (ime, prezime, username, email, password,role)  VALUES(?,?,?,?,?,?)',[req.body.ime, req.body.prezime,req.body.username,req.body.email,hashed,'User'], (err,data)=>{
           if(err){
-            res.end("greska na bazi");
+            res.render('register-korisnik', {poruka: "Greška sa bazom", greska: true});
             return;
           }
-          res.redirect('/');
+          res.render('login', {poruka: "Uspjesno registrovana Korisnik", greska: false});
         })
         }else{
-        res.render('register-agencija', {poruka: "Sifre se ne poklapaju"});
+        res.render('register-korisnik', {poruka: "Sifre se ne poklapaju", greska: true});
       }
       }
   });
@@ -45,25 +43,23 @@ router.post('/korisnik', async function(req,res,next){
 router.post('/agencija', function(req,res,next){
   db.get('SELECT * FROM agencija WHERE naziv=? OR email=?',[req.body.naziv_agencije, req.body.email], async(err,data)=>{
       if(err){
-        res.end("greska sa bazom");
+        res.render('register-agencija', {poruka: "Greška sa bazom", greska: true});
         return;
       }
       if(data){
-        res.render('register-agencija', {poruka: "Email adresa zauzeta"});
+        res.render('register-agencija', {poruka: "Postoji vec takva Agencija", greska: true});
       }else{
         if(req.body.password == req.body.ponovljena_lozinka){
-        const password = req.body.password;
-        const role = 'Agencija';
-        const hashed = await bcrypt.hash(password, 10);
-        db.run('INSERT INTO agencija (naziv, email, datum, password,role)  VALUES(?,?,?,?,?)',[req.body.naziv_agencije,req.body.email,req.body.datum_osnivanja,hashed,role], (err,data)=>{
+        const hashed = await bcrypt.hash(req.body.password, 10);
+        db.run('INSERT INTO agencija (naziv, email, datum, password,role)  VALUES(?,?,?,?,?)',[req.body.naziv_agencije,req.body.email,req.body.datum_osnivanja,hashed,'Agencija'], (err,data)=>{
           if(err){
-            res.end("greska na bazi");
+          res.render('register-agencija', {poruka: "Greška sa bazom", greska: true});
             return;
           }
-          res.redirect('/');
+          res.render('login', {poruka: "Uspjesno registrovana Agencija", greska:false});
         })
         }else{
-        res.render('register-agencija', {poruka: "Sifre se ne poklapaju"});
+        res.render('register-agencija', {poruka: "Sifre se ne poklapaju", greska: true});
         return;
       }
       }

@@ -14,7 +14,8 @@ router.get('/zaboravljena-lozinka', function(req,res,next){
 router.post('/', async function(req,res,next){
     db.get('SELECT * FROM korisnici WHERE username=?;', [req.body.username], async (err,data)=>{
       if(err){
-        console.log("greska na bazi");
+        console.log(err);
+        res.render('login', {poruka: "Greška sa bazom", greska: true});
         return;
       }
       if(data){
@@ -28,15 +29,15 @@ router.post('/', async function(req,res,next){
           req.session.korisnikId = data.id;
           res.redirect('/home');
         }else{
-        res.render('login', {poruka: "Pogrešna šifra"});
+        res.render('login', {poruka: "Pogrešna šifra", greska: true});
         }
       }else{
         db.get('SELECT * FROM agencija WHERE naziv=?;',[req.body.username], async (err,data)=>{
           if(err){
-            console.log("greska u bazi");
+           res.render('login', {poruka: "Greška sa bazom", greska: true});
             return;
           }
-
+          
           if(data){
             const match_agencija = await bcrypt.compare(req.body.password, data.password);
             if(match_agencija){
@@ -45,12 +46,13 @@ router.post('/', async function(req,res,next){
              req.session.datum = data.datum;
              req.session.role = data.role;
              req.session.email = data.email;
+             req.session.agencijaId = data.id;
              res.redirect('/home-agencija');
             }else{
-            res.render('login', {poruka: "Pogrešna šifra"});
+            res.render('login', {poruka: "Pogrešna šifra", greska: true});
             }
           }else{
-              res.render('login', {poruka: "Pogrešan korisnik"});
+              res.render('login', {poruka: "Pogrešan korisnik", greska: true});
           }
         })
       }

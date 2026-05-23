@@ -115,16 +115,15 @@
         <h1>Zaboravljena lozinka</h1>
         <p class="subtitle">Unesite email vašeg naloga i poslat ćemo vam novu lozinku</p>
       </div>
-      <% if(typeof poruka !== 'undefined'){ %>
+      <% if(typeof poruka !== 'undefined' && greska==true){ %>
       <div class="alert alert-danger">
-      <strong>Greška:</strong> <%= poruka %>
+      <%= poruka %>
       </div>
-      <% }%>
-      <% if(typeof uspjesno !== 'undefined'){ %>
+        <% }else if(typeof poruka !== 'undefined' && greska==false){ %>
       <div class="alert alert-success">
-      <strong><%= uspjesno %></strong>
+      <%= poruka %>
       </div>
-        <% }%>
+      <%  }%>
       <div class="divider"></div>
 
       <form action="/zaboravljena-lozinka" method="POST">

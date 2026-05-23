@@ -115,11 +115,15 @@
         <div class="logo-text mb-3">TERRA<span>VISTA</span></div>
         <h1>Login</h1>
       </div>
-      <% if(typeof poruka !== 'undefined'){ %>
+      <% if(typeof poruka !== 'undefined' && greska==true){ %>
       <div class="alert alert-danger">
-      <strong>Greška:</strong> <%= poruka %>
+      <%= poruka %>
       </div>
-        <% }%>
+        <% }else if(typeof poruka !== 'undefined' && greska==false){ %>
+      <div class="alert alert-success">
+      <%= poruka %>
+      </div>
+      <%  }%>
       <div class="divider"></div>
 
       <form action="/"  method="POST">
@@ -143,6 +147,11 @@
         <div class="text-center mt-4">
         <a href="/register" class="nazad-link">
           <label><a href="/zaboravljena-lozinka"><i class="bi bi-envelope">Zaboravili ste lozinku?</i></a></label>
+        </a>
+      </div>
+      <div class="text-center mt-4">
+        <a href="/register" class="nazad-link">
+          <label><a href="/register"><i class="bi bi-envelope">register</i></a></label>
         </a>
       </div>
     </div>
